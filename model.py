@@ -81,10 +81,10 @@ print(x_all.shape, y_all.shape)
 
 training_portion = int(x_all.shape[0] * 0.8)
 
-x_train = x_all[0:training_portion - 1, :, :]
+x_train = x_all[0:training_portion, :, :]
 x_test = x_all[training_portion:, :, :]
 
-y_train = y_all[0:training_portion - 1]
+y_train = y_all[0:training_portion]
 y_test = y_all[training_portion:]
 
 print(x_train.shape, x_test.shape)

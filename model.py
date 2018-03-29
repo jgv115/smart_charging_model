@@ -10,6 +10,8 @@ import csv
 import time
 import matplotlib.pylab as plt
 
+print('hello!!!')
+
 current = []
 charge_rate = []
 z = []

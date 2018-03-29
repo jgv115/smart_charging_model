@@ -114,7 +114,7 @@ model.compile(loss='categorical_crossentropy',
 for i in range(1):
     model.fit(x_train, y_train, batch_size=1, epochs=1, verbose=1, shuffle=False)
     model.reset_states()
-score = model.evaluate(x_test, y_test, batch_size=128)
+score = model.evaluate(x_test, y_test, batch_size=1)
 print("Model Accuracy: %.2f%%" % (score[1]*100))
 # print(score)
 # plt.plot(history.history['acc'])

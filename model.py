@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.layers.core import Dense, Activation, Dropout, Flatten
-from keras.layers import CuDNNLSTM
+from keras.layers import CuDNNLSTM, Conv1D, MaxPool1D, GlobalAveragePooling1D
 from keras.layers.recurrent import LSTM
 from keras.utils import np_utils
 
@@ -95,42 +95,57 @@ y_test = np_utils.to_categorical(y_test, no_classes)
 
 model = Sequential()
 
-model.add(
-    CuDNNLSTM(64, stateful=True, batch_input_shape=[1, x_train.shape[1], x_train.shape[2]]))
-##model.add(CuDNNLSTM(64, return_sequences=False))
-
-##model.add(LSTM(64, return_sequences=True, input_shape=(x_train.shape[1:])))
-# model.add(LSTM(128, return_sequences=True, input_shape=(x_train.shape[1:])))
-# model.add(LSTM(64, return_sequences=True))
-# model.add(LSTM(64, return_sequences=False))
-# model.add(Dropout(0.5))
+model.add(Conv1D(64, 3, activation='relu', input_shape=(20, 2)))
+model.add(MaxPool1D())
+model.add(Conv1D(128, 3, activation='relu'))
+model.add(GlobalAveragePooling1D())
+model.add(Dropout(0.5))
+# model.add(Flatten())
 model.add(Dense(no_classes, activation='sigmoid'))
 
-adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.00)
 model.compile(loss='categorical_crossentropy',
-              optimizer=adam,
+              optimizer='adam',
               metrics=['accuracy'])
 
-for i in range(1):
-    model.fit(x_train, y_train, batch_size=1, epochs=1, verbose=1, shuffle=False)
-    model.reset_states()
-score = model.evaluate(x_test, y_test, batch_size=1)
-print("Model Accuracy: %.2f%%" % (score[1]*100))
-# print(score)
-# plt.plot(history.history['acc'])
-# plt.plot(history.history['val_acc'])
-# plt.title('model accuracy')
-# plt.ylabel('accuracy')
-# plt.xlabel('epoch')
-# plt.legend(['train', 'test'], loc='upper left')
-# plt.show()
-# # summarize history for loss
-# plt.plot(history.history['loss'])
-# plt.plot(history.history['val_loss'])
-# plt.title('model loss')
-# plt.ylabel('loss')
-# plt.xlabel('epoch')
-# plt.legend(['train', 'test'], loc='upper left')
-# plt.show()
+history = model.fit(x_train, y_train, batch_size=16, epochs=10, validation_data=[x_test, y_test])
+score = model.evaluate(x_test, y_test, batch_size=16)
+print(score)
+# model.add(
+#     CuDNNLSTM(64, stateful=True, batch_input_shape=[1, x_train.shape[1], x_train.shape[2]]))
+# ##model.add(CuDNNLSTM(64, return_sequences=False))
 #
-# model.save('model8.h5')
+# ##model.add(LSTM(64, return_sequences=True, input_shape=(x_train.shape[1:])))
+# # model.add(LSTM(128, return_sequences=True, input_shape=(x_train.shape[1:])))
+# # model.add(LSTM(64, return_sequences=True))
+# # model.add(LSTM(64, return_sequences=False))
+# # model.add(Dropout(0.5))
+# model.add(Dense(no_classes, activation='sigmoid'))
+#
+# adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.00)
+# model.compile(loss='categorical_crossentropy',
+#               optimizer=adam,
+#               metrics=['accuracy'])
+#
+# for i in range(1):
+#     model.fit(x_train, y_train, batch_size=1, epochs=1, verbose=1, shuffle=False)
+#     model.reset_states()
+# score = model.evaluate(x_test, y_test, batch_size=1)
+# print("Model Accuracy: %.2f%%" % (score[1]*100))
+# # print(score)
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# #
+# # model.save('model8.h5')

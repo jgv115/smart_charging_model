@@ -100,6 +100,8 @@ model.add(MaxPool1D())
 model.add(Conv1D(128, 3, activation='relu'))
 model.add(GlobalAveragePooling1D())
 model.add(Dropout(0.5))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.5))
 # model.add(Flatten())
 model.add(Dense(no_classes, activation='sigmoid'))
 

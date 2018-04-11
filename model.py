@@ -95,22 +95,28 @@ y_test = np_utils.to_categorical(y_test, no_classes)
 
 model = Sequential()
 
-model.add(Conv1D(64, 3, activation='relu', input_shape=(20, 2)))
+model.add(Conv1D(32, 3, activation='relu', input_shape=(20, 2)))
+model.add(Conv1D(64, 3, activation='relu'))
+model.add(MaxPool1D())
+model.add(Conv1D(64, 3, activation='relu'))
 model.add(MaxPool1D())
 model.add(Conv1D(128, 3, activation='relu'))
 model.add(GlobalAveragePooling1D())
 model.add(Dropout(0.5))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.5))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.5))
 # model.add(Flatten())
-model.add(Dense(no_classes, activation='sigmoid'))
+model.add(Dense(no_classes, activation='softmax'))
+adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.01)
 
 model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
+              optimizer=adam,
               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, batch_size=16, epochs=10, validation_data=[x_test, y_test])
-score = model.evaluate(x_test, y_test, batch_size=16)
+history = model.fit(x_train, y_train, batch_size=128, epochs=2000, validation_data=[x_test, y_test])
+score = model.evaluate(x_test, y_test, batch_size=128)
 print(score)
 # model.add(
 #     CuDNNLSTM(64, stateful=True, batch_input_shape=[1, x_train.shape[1], x_train.shape[2]]))
